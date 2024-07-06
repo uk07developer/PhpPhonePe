@@ -1,1 +1,155 @@
-A
+1. **Initiate Payment**
+2. **Verify Payment**
+3. **Refund Payment**
+4. **Auto Pay**
+
+### Note:
+To integrate PhonePe, you would typically need to interact with their APIs. For a complete and working integration, you would need the API keys and follow the official PhonePe documentation for the exact API endpoints, request, and response formats.
+
+#### Example Structure
+
+### 1. Initiate Payment
+```php
+<?php
+function initiatePayment($amount, $merchantId, $merchantKey, $callbackUrl, $orderId) {
+    $url = "https://api.phonepe.com/apis/merchant/v1/initiatePayment";
+    
+    $data = array(
+        "amount" => $amount,
+        "merchantId" => $merchantId,
+        "callbackUrl" => $callbackUrl,
+        "orderId" => $orderId
+    );
+    
+    $headers = array(
+        "Content-Type: application/json",
+        "X-VERIFY: " . hash_hmac('sha256', json_encode($data), $merchantKey)
+    );
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    return $response;
+}
+
+// Usage
+$response = initiatePayment(10000, "your_merchant_id", "your_merchant_key", "your_callback_url", "order12345");
+echo $response;
+?>
+```
+
+### 2. Verify Payment
+```php
+<?php
+function verifyPayment($merchantId, $transactionId, $merchantKey) {
+    $url = "https://api.phonepe.com/apis/merchant/v1/paymentStatus";
+    
+    $data = array(
+        "merchantId" => $merchantId,
+        "transactionId" => $transactionId
+    );
+    
+    $headers = array(
+        "Content-Type: application/json",
+        "X-VERIFY: " . hash_hmac('sha256', json_encode($data), $merchantKey)
+    );
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    return $response;
+}
+
+// Usage
+$response = verifyPayment("your_merchant_id", "transaction12345", "your_merchant_key");
+echo $response;
+?>
+```
+
+### 3. Refund Payment
+```php
+<?php
+function refundPayment($merchantId, $transactionId, $amount, $merchantKey) {
+    $url = "https://api.phonepe.com/apis/merchant/v1/refund";
+    
+    $data = array(
+        "merchantId" => $merchantId,
+        "transactionId" => $transactionId,
+        "amount" => $amount
+    );
+    
+    $headers = array(
+        "Content-Type: application/json",
+        "X-VERIFY: " . hash_hmac('sha256', json_encode($data), $merchantKey)
+    );
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    return $response;
+}
+
+// Usage
+$response = refundPayment("your_merchant_id", "transaction12345", 5000, "your_merchant_key");
+echo $response;
+?>
+```
+
+### 4. Auto Pay
+```php
+<?php
+function autoPay($amount, $merchantId, $merchantKey, $callbackUrl, $orderId, $recurringFrequency) {
+    $url = "https://api.phonepe.com/apis/merchant/v1/autoPay";
+
+    $data = array(
+        "amount" => $amount,
+        "merchantId" => $merchantId,
+        "callbackUrl" => $callbackUrl,
+        "orderId" => $orderId,
+        "recurringFrequency" => $recurringFrequency
+    );
+
+    $headers = array(
+        "Content-Type: application/json",
+        "X-VERIFY: " . hash_hmac('sha256', json_encode($data), $merchantKey)
+    );
+
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+    $response = curl_exec($ch);
+    curl_close($ch);
+
+    return $response;
+}
+
+// Usage
+$response = autoPay(10000, "your_merchant_id", "your_merchant_key", "your_callback_url", "order12345", "MONTHLY");
+echo $response;
+?>
+```
+
+### Important Notes:
+- This is a basic example and might not cover all the scenarios and error handling you would need for a production implementation.
+- Make sure to use secure methods to store and manage your API keys.
+- Refer to PhonePe's official API documentation for the latest endpoints, request, and response formats.
+- Ensure proper validation and error handling is implemented for robustness.
+
+Feel free to adjust the code as per your specific requirements and the details provided by PhonePe's API documentation.
